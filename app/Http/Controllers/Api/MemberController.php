@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Member;
 use App\Http\Requests\MemberRequest;
 use App\Http\Resources\MemberResource;
+use App\Mail\MemberCreated;
+use App\Member;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Управление участниками мероприятий
@@ -43,6 +45,7 @@ class MemberController extends Controller
     {
         $member = Member::create($request->validated());
         $member = $this->attachEvents($member, $request->get('events'));
+        Mail::to($request->get('email'))->send(new MemberCreated($member));
         return new MemberResource($member);
     }
 
