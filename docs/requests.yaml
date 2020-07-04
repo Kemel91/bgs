@@ -1,0 +1,52 @@
+openapi: 3.0.1
+info:
+  title: BGS API
+  description: Requests BGS API
+  version: 1.0.0
+
+paths:
+
+components:
+  schemas:
+    requests.Members:
+      required:
+        - firstname
+        - lastname
+        - email
+      properties:
+        firstname:
+          description: Значение
+          type: string
+          example: Иван
+        lastname:
+          description: Наименование
+          type: string
+          example: Иванов
+        email:
+          description: Электронная почта
+          type: string
+          example: ivanov@mail.ru
+        events:
+          description: Мероприятия
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: ID мероприятия
+                example: 2
+
+    requests.Auth:
+      required:
+        - email
+        - password
+      properties:
+        email:
+          description: Электронная почта пользователя
+          type: string
+          example: hr@bgs-group.eu
+        password:
+          description: Пароль
+          type: string
+          example: '123456'

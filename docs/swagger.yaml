@@ -1,0 +1,197 @@
+openapi: 3.0.1
+info:
+  title: BGS API Methhods
+  description: Описание документации методов API для тестового задания
+  version: 1.0.0
+servers:
+  - url: 'http://localhost/api'
+tags:
+  - name: Auth
+  - name: Members
+
+paths:
+  /auth:
+    post:
+      summary: Аутентификация в приложении
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './requests.yaml#/components/schemas/requests.Auth'
+      responses:
+        200:
+          description: Успешная аутентификация
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: './responses.yaml#/components/schemas/responses.Auth'
+        422:
+          $ref: '#/components/responses/422'
+
+  /members:
+    get:
+      tags:
+        - Members
+      summary: Получение всех записей участников
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/event_id'
+      responses:
+        200:
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: './responses.yaml#/components/schemas/responses.Members'
+    post:
+      tags:
+        - Members
+      summary: Добавление нового участника
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './requests.yaml#/components/schemas/requests.Members'
+      responses:
+        201:
+          description: Успешное добавление записи
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: './responses.yaml#/components/schemas/responses.Members'
+        422:
+          $ref: '#/components/responses/422'
+
+  /members/{id}:
+    get:
+      tags:
+        - Members
+      summary: Получение информации о выбранном участнике
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: './responses.yaml#/components/schemas/responses.Members'
+        404:
+          $ref: '#/components/responses/404'
+    put:
+      tags:
+        - Members
+      summary: Редактирование участника
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './requests.yaml#/components/schemas/requests.Members'
+      responses:
+        200:
+          description: Успешное редактирование записи
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: './responses.yaml#/components/schemas/responses.Members'
+        422:
+          $ref: '#/components/responses/422'
+
+    delete:
+      tags:
+        - Members
+      summary: Удаление выбранной записи
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: integer
+                    nullable: true
+        404:
+          $ref: '#/components/responses/404'
+
+components:
+  securitySchemes:
+
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    404:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  error:
+                    description: Описание ошибки
+                    type: string
+    422:
+      description: Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            type: object
+
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        example: 5
+      description: Идентификатор
+    event_id:
+      name: event_id
+      in: query
+      schema:
+        type: integer
+        example: 3
+      description: Идентификатор мероприятия

@@ -1,0 +1,54 @@
+openapi: 3.0.1
+info:
+  title: BGS API
+  description: Схемы ответов BGS API
+  version: 1.0.0
+
+paths:
+
+components:
+  schemas:
+    responses.Members:
+      type: object
+      required:
+        - id
+        - firstname
+        - lastname
+        - email
+      properties:
+        id:
+          description: ID участника
+          type: integer
+        firstname:
+          description: Имя участника
+          type: string
+        lastname:
+          description: Фамилия участника
+          type: string
+        email:
+          description: Электронная почта
+          type: string
+        events:
+          description: Мероприятия
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: ID мероприятия
+              title:
+                type: string
+                description: Название мероприятия
+              city:
+                type: object
+                description: Город проведения
+
+    responses.Auth:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          description: Bearer token
+          type: string

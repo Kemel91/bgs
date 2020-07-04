@@ -21,7 +21,7 @@ Route::post('auth', function (Request $request) {
         ->where('email',$request->get('email'))
         ->first();
     if (!is_null($user) && Hash::check($request->get('password'), $user->password)) {
-        return response()->json(['token' => $user->api_token]);
+        return response()->json(['data' => ['token' => $user->api_token]]);
     }
     return response()->json(['error' => 'Ошибка авторизации'], 422);
 });
