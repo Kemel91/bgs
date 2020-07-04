@@ -4,6 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * Class MemberResource
+ * @package App\Http\Resources
+ */
 class MemberResource extends JsonResource
 {
     /**
@@ -19,7 +23,7 @@ class MemberResource extends JsonResource
             'firstname' => $this->getResource()->firstname,
             'lastname' => $this->getResource()->lastname,
             'email' => $this->getResource()->email,
-            'events' => $this->getResource()->events
+            'events' => EventResource::collection($this->getResource()->events)
         ];
     }
 

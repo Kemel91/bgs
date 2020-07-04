@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string $firstname
  * @property string $lastname
  * @property string $email
+ * @property-read Event $events
  */
 class Member extends Model
 {

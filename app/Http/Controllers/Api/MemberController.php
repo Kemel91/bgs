@@ -9,35 +9,47 @@ use App\Http\Resources\MemberResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * Управление участниками мероприятий
+ * Class MemberController
+ * @package App\Http\Controllers\Api
+ */
 class MemberController extends Controller
 {
     /**
      * Выдача всех участников
      *
+     * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        return JsonResource::collection(Member::all());
+        $members = Member::query();
+        if ($request->get('event_id')) {
+            $members->whereHas('events', function ($query) use ($request) {
+                $query->where('id', (int)$request->get('event_id'));
+            });
+        }
+        return MemberResource::collection($members->get());
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Добавление нового участника
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param MemberRequest $request
      * @return MemberResource
      */
     public function store(MemberRequest $request): MemberResource
     {
-        dd($request->get('events'));
         $member = Member::create($request->validated());
+        $member = $this->attachEvents($member, $request->get('events'));
         return new MemberResource($member);
     }
 
     /**
-     * Display the specified resource.
+     * Вывод определенного участника
      *
-     * @param  int  $id
+     * @param int $id
      * @return JsonResource
      */
     public function show($id)
@@ -50,7 +62,7 @@ class MemberController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Обновление информации об участнике
      *
      * @param MemberRequest $request
      * @param int $id
@@ -64,11 +76,12 @@ class MemberController extends Controller
         }
         $member->fill($request->validated());
         $member->save();
+        $member = $this->attachEvents($member, $request->get('events'));
         return new MemberResource($member);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Удаление участника
      *
      * @param int $id
      * @return JsonResource
@@ -82,5 +95,23 @@ class MemberController extends Controller
         }
         $member->delete();
         return new JsonResource(null);
+    }
+
+    /**
+     * Присоединяем события
+     *
+     * @param Member $member
+     * @param array $events
+     * @return Member
+     */
+    private function attachEvents(Member $member, array $events): Member
+    {
+        if (!is_null($events)) {
+            $member->events()->detach();
+            foreach ($events as $event) {
+                $member->events()->attach($event);
+            }
+        }
+        return $member;
     }
 }
