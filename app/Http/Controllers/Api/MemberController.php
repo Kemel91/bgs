@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\NotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MemberRequest;
+use App\Http\Requests\MemberUpdateRequest;
 use App\Http\Resources\MemberResource;
 use App\Mail\MemberCreated;
 use App\Member;
@@ -53,14 +55,13 @@ class MemberController extends Controller
      * Вывод определенного участника
      *
      * @param int $id
-     * @return JsonResource
+     * @return MemberResource
+     * @throws \Throwable
      */
-    public function show($id)
+    public function show($id): MemberResource
     {
         $member = Member::query()->find($id);
-        if (is_null($member)) {
-            return new JsonResource(['error' => 'Not found member']);
-        }
+        throw_if(!$member, NotFoundException::class);
         return new MemberResource($member);
     }
 
@@ -69,14 +70,13 @@ class MemberController extends Controller
      *
      * @param MemberRequest $request
      * @param int $id
-     * @return JsonResource
+     * @return MemberResource
+     * @throws \Throwable
      */
-    public function update(MemberRequest $request, $id)
+    public function update(MemberUpdateRequest $request, $id): MemberResource
     {
         $member = Member::query()->find($id);
-        if (is_null($member)) {
-            return new JsonResource(['error' => 'Not found member']);
-        }
+        throw_if(!$member, NotFoundException::class);
         $member->fill($request->validated());
         $member->save();
         $member = $this->attachEvents($member, $request->get('events'));
@@ -89,13 +89,12 @@ class MemberController extends Controller
      * @param int $id
      * @return JsonResource
      * @throws \Exception
+     * @throws \Throwable
      */
-    public function destroy($id)
+    public function destroy($id): JsonResource
     {
         $member = Member::query()->find($id);
-        if (is_null($member)) {
-            return new JsonResource(['error' => 'Not found member']);
-        }
+        throw_if(!$member, NotFoundException::class);
         $member->delete();
         return new JsonResource(null);
     }
