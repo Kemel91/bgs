@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Event extends Model
 {
+    public $timestamps = false;
+
     /**
      * @return BelongsTo
      */

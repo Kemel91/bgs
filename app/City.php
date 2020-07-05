@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class City extends Model
 {
+    public $timestamps = false;
+
     /**
      * @return HasMany
      */

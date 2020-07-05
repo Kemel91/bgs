@@ -106,9 +106,9 @@ class MemberController extends Controller
      * @param array $events
      * @return Member
      */
-    private function attachEvents(Member $member, array $events): Member
+    private function attachEvents(Member $member, ?array $events): Member
     {
-        if (!is_null($events)) {
+        if (is_array($events)) {
             $member->events()->detach();
             foreach ($events as $event) {
                 $member->events()->attach($event);

@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateCitiesTable extends Migration
@@ -18,12 +17,7 @@ class CreateCitiesTable extends Migration
             $table->id();
             $table->string('title');
         });
-        $cities = ['Москва', 'Челябинск', 'Волгоград', 'Казань'];
-        $data = [];
-        foreach ($cities as $city) {
-            $data[] = ['title' => $city];
-        }
-        DB::table('cities')->insert($data);
+        factory(\App\City::class,10)->create();
     }
 
     /**
